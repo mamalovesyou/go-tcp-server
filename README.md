@@ -1,7 +1,10 @@
-This is a simple TCP server written in Go.
+# Simple TCP server written in Go.
+
+I wrote this programm to get familiar with the net package in go. My final goal is to continue to learn about go and
+code using go routines and concurrency patterns.
 
 ## Being concurrent
-The implementation of the main() function tells the TCP server to start a new goroutine each time it
+The implementation of the main() function tells our TCP server to start a new goroutine each time it
 has to serve a TCP client:
 
 ```go
@@ -23,3 +26,8 @@ func main() {
 	}
 }
 ```
+
+The net.Listen() call is used to accept network connections and thus act as a server. The return value of net.Listen()
+is of the net.Conn type, which implements both io.Reader and io.Writer interfaces. The for loop allows our program to
+keep accepting new TCP clients using Accept() that will be handled by instances of the handle() function, which are
+executed as goroutines.
