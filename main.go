@@ -1,14 +1,23 @@
 package main
 
 import (
-	"fmt"
-	"io"
+	"bufio"
 	"log"
 	"net"
 )
 
-func main() {
+func handle(conn net.Conn) {
+	log.Printf("Now serving: %s \n", conn.RemoteAddr().String())
+	scanner := bufio.NewScanner(conn)
+	for scanner.Scan() {
+		ln := scanner.Text()
+		log.Println(ln)
+	}
+	defer conn.Close()
 
+}
+
+func main() {
 	listener, err := net.Listen("tcp", ":8080")
 	if err != nil {
 		log.Fatal(err)
@@ -18,13 +27,10 @@ func main() {
 	for {
 		conn, err := listener.Accept()
 		if err != nil {
-			// Print the error. Using a log.Fatal would exit the server
+			// Print the error using a log.Fatal would exit the server
 			log.Println(err)
 		}
-		io.WriteString(conn, "\nHello from TCP")
-		fmt.Fprintln(conn, "\nHow is your day ?")
-		fmt.Fprintf(conn, "%v", "Well, I hope!\n-----\n")
-
-		conn.Close()
+		// Using a go routine to handle the connection
+		go handle(conn)
 	}
 }
